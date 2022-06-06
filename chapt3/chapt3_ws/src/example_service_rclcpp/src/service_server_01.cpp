@@ -5,7 +5,7 @@ class ServiceServer01 : public rclcpp::Node {
 public:
   ServiceServer01(std::string name) : Node(name) {
     RCLCPP_INFO(this->get_logger(), "节点已启动：%s.", name.c_str());
-    // 创建一个订阅者订阅话题
+    // 创建服务
     add_ints_server_ =
       this->create_service<example_interfaces::srv::AddTwoInts>(
         "add_two_ints_srv",
@@ -18,7 +18,7 @@ private:
   rclcpp::Service<example_interfaces::srv::AddTwoInts>::SharedPtr
     add_ints_server_;
 
-  // 收到话题数据的回调函数
+  // 收到请求的处理函数
   void handle_add_two_ints(
     const std::shared_ptr<example_interfaces::srv::AddTwoInts::Request> request,
     std::shared_ptr<example_interfaces::srv::AddTwoInts::Response> response) {

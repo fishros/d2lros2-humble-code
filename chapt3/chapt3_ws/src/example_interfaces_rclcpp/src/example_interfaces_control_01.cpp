@@ -1,5 +1,5 @@
 
-#include "example_ros2_interfaces/srv/linear_motion.hpp"
+#include "example_ros2_interfaces/srv/move_robot.hpp"
 #include "example_ros2_interfaces/msg/robot_status.hpp"
 #include "rclcpp/rclcpp.hpp"
 
@@ -9,7 +9,7 @@ public:
   ExampleInterfacesControl(std::string name) : Node(name) {
     RCLCPP_INFO(this->get_logger(), "节点已启动：%s.", name.c_str());
     // 创建客户端
-    client_ = this->create_client<example_ros2_interfaces::srv::LinearMotion>(
+    client_ = this->create_client<example_ros2_interfaces::srv::MoveRobot>(
       "move_robot");
   }
 
@@ -28,7 +28,7 @@ public:
 
     // 2.构造请求的
     auto request =
-      std::make_shared<example_ros2_interfaces::srv::LinearMotion::Request>();
+      std::make_shared<example_ros2_interfaces::srv::MoveRobot::Request>();
     request->distance = distance;
 
     // 3.发送异步请求，然后等待返回，返回时调用回调函数
@@ -39,10 +39,10 @@ public:
 
 private:
   // 声明客户端
-  rclcpp::Client<example_ros2_interfaces::srv::LinearMotion>::SharedPtr client_;
+  rclcpp::Client<example_ros2_interfaces::srv::MoveRobot>::SharedPtr client_;
 
   void result_callback_(
-    rclcpp::Client<example_ros2_interfaces::srv::LinearMotion>::SharedFuture
+    rclcpp::Client<example_ros2_interfaces::srv::MoveRobot>::SharedFuture
       result_future) {
     auto response = result_future.get();
     RCLCPP_INFO(this->get_logger(), "收到移动结果：%f", response->pose);

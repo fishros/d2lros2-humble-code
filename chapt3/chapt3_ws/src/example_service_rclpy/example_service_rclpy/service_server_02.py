@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
-import imp
 import rclpy
 from rclpy.node import Node
+# 导入接口
 from example_interfaces.srv import AddTwoInts
 
 

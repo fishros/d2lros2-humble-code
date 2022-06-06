@@ -1,7 +1,4 @@
 #!/usr/bin/env python3
-import imp
-
-from sympy import Add
 import rclpy
 from rclpy.node import Node
 from example_interfaces.srv import AddTwoInts
@@ -18,6 +15,9 @@ class ServiceClient02(Node):
         self.get_logger().info(f"收到返回结果：{response.sum}")
     
     def send_request(self, a, b):
+        while rclpy.ok() and self.client_.wait_for_service(1)==False:
+            self.get_logger().info(f"等待服务端上线....")
+            
         request = AddTwoInts.Request()
         request.a = a
         request.b = b
