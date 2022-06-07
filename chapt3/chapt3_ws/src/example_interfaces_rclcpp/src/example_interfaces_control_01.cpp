@@ -11,9 +11,11 @@ public:
     // 创建客户端
     client_ = this->create_client<example_ros2_interfaces::srv::MoveRobot>(
       "move_robot");
+    robot_status_subscribe_ = this->create_subscription<example_ros2_interfaces::msg::RobotStatus>("robot_status", 10, std::bind(&ExampleInterfacesControl::robot_status_callback_, this, std::placeholders::_1));
+    
   }
 
-  void send_request(float distance) {
+  void move_robot(float distance) {
     RCLCPP_INFO(this->get_logger(), "请求让机器人移动%f", distance);
 
     // 1.等待服务端上线
@@ -26,7 +28,7 @@ public:
       RCLCPP_INFO(this->get_logger(), "等待服务端上线中");
     }
 
-    // 2.构造请求的
+    // 2.构造请求
     auto request =
       std::make_shared<example_ros2_interfaces::srv::MoveRobot::Request>();
     request->distance = distance;
@@ -40,12 +42,18 @@ public:
 private:
   // 声明客户端
   rclcpp::Client<example_ros2_interfaces::srv::MoveRobot>::SharedPtr client_;
+  rclcpp::Subscription<example_ros2_interfaces::msg::RobotStatus>::SharedPtr robot_status_subscribe_;
 
   void result_callback_(
     rclcpp::Client<example_ros2_interfaces::srv::MoveRobot>::SharedFuture
       result_future) {
     auto response = result_future.get();
     RCLCPP_INFO(this->get_logger(), "收到移动结果：%f", response->pose);
+  }
+
+  void robot_status_callback_(const example_ros2_interfaces::msg::RobotStatus::SharedPtr msg)
+  {
+    RCLCPP_INFO(this->get_logger(), "收到状态数据位置：%f 状态：%d", msg->pose ,msg->status);
   }
 };
 
@@ -54,7 +62,7 @@ int main(int argc, char** argv) {
   /*产生一个的节点*/
   auto node = std::make_shared<ExampleInterfacesControl>("example_interfaces_control_01");
   /* 运行节点，并检测退出信号*/
-  node->send_request(5.0);
+  node->move_robot(5.0);
   rclcpp::spin(node);
   rclcpp::shutdown();
   return 0;

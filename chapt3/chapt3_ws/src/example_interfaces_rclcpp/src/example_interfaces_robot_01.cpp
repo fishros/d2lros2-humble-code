@@ -11,15 +11,15 @@ public:
   Robot() = default;
   ~Robot() = default;
   float move_distance(float distance) {
-    status = example_ros2_interfaces::msg::RobotStatus::STATUS_MOVEING;
+    status_ = example_ros2_interfaces::msg::RobotStatus::STATUS_MOVEING;
     target_pose_ += distance;
-    while (fabs(target_pose_ - current_pose_) > 0.5) {
-      float step = distance / fabs(distance) * 0.1;
+    while (fabs(target_pose_ - current_pose_) > 0.01) {
+      float step = distance / fabs(distance) * fabs(target_pose_ - current_pose_) * 0.1;
       current_pose_  += step;
       std::cout<<"移动了："<<step<<"当前位置："<<current_pose_<<std::endl;
       std::this_thread::sleep_for(std::chrono::milliseconds(500));
     }
-    status = example_ros2_interfaces::msg::RobotStatus::STATUS_STOP;
+    status_ = example_ros2_interfaces::msg::RobotStatus::STATUS_STOP;
     return current_pose_;
   }
 
@@ -30,7 +30,7 @@ public:
 
   int get_status()
   {
-    return status;
+    return status_;
   }
 
 private:
@@ -38,7 +38,7 @@ private:
   float current_pose_ = 0.0;
   // 目标距离
   float target_pose_ = 0.0;
-  int status = example_ros2_interfaces::msg::RobotStatus::STATUS_STOP;
+  int status_ = example_ros2_interfaces::msg::RobotStatus::STATUS_STOP;
 };
 
 
