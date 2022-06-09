@@ -1,0 +1,21 @@
+repositories:
+    foonathan_memory_vendor:
+        type: git
+        url: https://ghproxy.com/https://github.com/eProsima/foonathan_memory_vendor.git
+        version: v1.2.1
+    fastcdr:
+        type: git
+        url: https://ghproxy.com/https://github.com/eProsima/Fast-CDR.git
+        version: v1.0.24
+    fastdds:
+        type: git
+        url: https://ghproxy.com/https://github.com/eProsima/Fast-DDS.git
+        version: v2.6.0
+    fastddsgen:
+        type: git
+        url: https://ghproxy.com/https://github.com/eProsima/Fast-DDS-Gen.git
+        version: master
+    fastddsgen/thirdparty/idl-parser:
+        type: git
+        url: https://ghproxy.com/https://github.com/eProsima/IDL-Parser.git
+        version: master

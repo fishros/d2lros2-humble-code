@@ -1,0 +1,10 @@
+# 要移动的距离
+float32 distance
+---
+# 当前的pose
+float32 pose
+---
+# 最终的pose
+float32 pose
+uint32 STATUS_MOVEING = 3
+uint32 STATUS_STOP = 4

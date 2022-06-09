@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="3">
-  <name>robot_control_interfaces</name>
+  <name>example_action_rclcpp</name>
   <version>0.0.0</version>
   <description>TODO: Package description</description>
   <maintainer email="87068644+fishros@users.noreply.github.com">root</maintainer>
@@ -9,13 +9,12 @@
 
   <buildtool_depend>ament_cmake</buildtool_depend>
 
-  <depend>rosidl_default_generators</depend>
-  <depend>geometry_msgs</depend>
+  <depend>rclcpp</depend>
+  <depend>robot_control_interfaces</depend>
 
   <test_depend>ament_lint_auto</test_depend>
   <test_depend>ament_lint_common</test_depend>
-  <member_of_group>rosidl_interface_packages</member_of_group>
-  
+
   <export>
     <build_type>ament_cmake</build_type>
   </export>
