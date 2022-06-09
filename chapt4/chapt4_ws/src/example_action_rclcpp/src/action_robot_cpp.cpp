@@ -8,6 +8,27 @@ public:
   using MoveRobot = robot_control_interfaces::action::MoveRobot;
   Robot() = default;
   ~Robot() = default;
+
+
+  float move_step(float step) {
+    status_ = MoveRobot::Feedback::STATUS_MOVEING;
+    
+    // target_pose_ += distance;
+    // /* 当目标距离和当前距离大于0.01则持续向目标移动 */
+    // while (fabs(target_pose_ - current_pose_) > 0.01) {
+    //   /* 每一步移动当前到目标距离的1/10*/
+    //   float step = distance / fabs(distance) * fabs(target_pose_ - current_pose_) * 0.1;
+    //   current_pose_ += step;
+    //   std::cout << "移动了：" << step << "当前位置：" << current_pose_ << std::endl;
+    //   /*当前线程休眠500ms*/
+    //   std::this_thread::sleep_for(std::chrono::milliseconds(500));
+    // }
+
+    status_ = MoveRobot::Feedback::STATUS_STOP;
+    return current_pose_;
+  }
+
+
   /**
    * @brief 移动指定的距离
    *
@@ -16,6 +37,7 @@ public:
    */
   float move_distance(float distance) {
     status_ = MoveRobot::Feedback::STATUS_MOVEING;
+    
     target_pose_ += distance;
     /* 当目标距离和当前距离大于0.01则持续向目标移动 */
     while (fabs(target_pose_ - current_pose_) > 0.01) {
@@ -26,6 +48,7 @@ public:
       /*当前线程休眠500ms*/
       std::this_thread::sleep_for(std::chrono::milliseconds(500));
     }
+
     status_ = MoveRobot::Feedback::STATUS_STOP;
     return current_pose_;
   }
@@ -62,7 +85,6 @@ public:
 
   explicit ActionRobotCpp(std::string name) : Node(name) {
     using namespace std::placeholders;
-
     this->action_server_ =
       rclcpp_action::create_server<MoveRobot>(this->get_node_base_interface(), this->get_node_clock_interface(), this->get_node_logging_interface(),
                                               this->get_node_waitables_interface(), "move_robot", std::bind(&ActionRobotCpp::handle_goal, this, _1, _2),
@@ -87,16 +109,18 @@ private:
   rclcpp_action::CancelResponse handle_cancel(const std::shared_ptr<GoalHandleMoveRobot> goal_handle) {
     RCLCPP_INFO(this->get_logger(), "Received request to cancel goal");
     (void)goal_handle;
-    /*认可取消执行，让机器人停下来*/
-    robot.stop_move();
+    robot.stop_move(); /*认可取消执行，让机器人停下来*/
     return rclcpp_action::CancelResponse::ACCEPT;
   }
 
   void execute(const std::shared_ptr<GoalHandleMoveRobot> goal_handle) {
-    RCLCPP_INFO(this->get_logger(), "Executing goal");
+    RCLCPP_INFO(this->get_logger(), "开始执行移动。。。");
     const auto goal = goal_handle->get_goal();
+    
     auto feedback = std::make_shared<MoveRobot::Feedback>();
-    float& pose = feedback->pose;
+
+
+
     auto result = std::make_shared<MoveRobot::Result>();
 
     pose = 0.1f;
@@ -104,8 +128,7 @@ private:
     goal_handle->publish_feedback(feedback);
     RCLCPP_INFO(this->get_logger(), "Publish Feedback");
 
-    
-    // 处理取消
+        // 处理取消
     if (goal_handle->is_canceling()) {
       result->pose = 0.0f;
       goal_handle->canceled(result);
@@ -123,7 +146,7 @@ private:
 
   void handle_accepted(const std::shared_ptr<GoalHandleMoveRobot> goal_handle) {
     using namespace std::placeholders;
-    // this needs to return quickly to avoid blocking the executor, so spin up a new thread
+    /* 接收后进行立马开个新线程进行移动 */
     std::thread{std::bind(&ActionRobotCpp::execute, this, _1), goal_handle}.detach();
   }
 };  // class ActionRobotCpp

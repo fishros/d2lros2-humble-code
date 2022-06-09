@@ -10,6 +10,7 @@ class Robot {
 public:
   Robot() = default;
   ~Robot() = default;
+  
   /**
    * @brief 移动指定的距离
    *
@@ -19,18 +20,18 @@ public:
   float move_distance(float distance) {
     status_ = example_ros2_interfaces::msg::RobotStatus::STATUS_MOVEING;
     target_pose_ += distance;
-    // 当目标距离和当前距离大于0.01则持续向目标移动
+    /*当目标距离和当前距离大于0.01则持续向目标移动*/
     while (fabs(target_pose_ - current_pose_) > 0.01) {
-      // 每一步移动当前到目标距离的1/10
+      /*每一步移动当前到目标距离的1/10*/
       float step = distance / fabs(distance) * fabs(target_pose_ - current_pose_) * 0.1;
       current_pose_ += step;
       std::cout << "移动了：" << step << "当前位置：" << current_pose_ << std::endl;
-      // 当前线程休眠500ms
-      std::this_thread::sleep_for(std::chrono::milliseconds(500));
+      std::this_thread::sleep_for(std::chrono::milliseconds(500)); /*当前线程休眠500ms*/
     }
     status_ = example_ros2_interfaces::msg::RobotStatus::STATUS_STOP;
     return current_pose_;
   }
+
   /**
    * @brief Get the current pose
    *
@@ -48,13 +49,10 @@ public:
   int get_status() { return status_; }
 
 private:
-  // 声明当前位置
-  float current_pose_ = 0.0;
-  // 目标距离
-  float target_pose_ = 0.0;
+  float current_pose_ = 0.0; /*声明当前位置*/
+  float target_pose_ = 0.0;  /*目标距离*/
   int status_ = example_ros2_interfaces::msg::RobotStatus::STATUS_STOP;
 };
-
 
 class ExampleInterfacesRobot : public rclcpp::Node {
 public:
@@ -70,28 +68,26 @@ public:
   }
 
 private:
-  Robot robot; /*实例化机器人*/
-  rclcpp::TimerBase::SharedPtr timer_; /*定时器，用于定时发布机器人位置*/
-  rclcpp::Service<example_ros2_interfaces::srv::MoveRobot>::SharedPtr move_robot_server_; /*移动机器人服务*/
+  Robot robot;                                                                                     /*实例化机器人*/
+  rclcpp::TimerBase::SharedPtr timer_;                                                             /*定时器，用于定时发布机器人位置*/
+  rclcpp::Service<example_ros2_interfaces::srv::MoveRobot>::SharedPtr move_robot_server_;          /*移动机器人服务*/
   rclcpp::Publisher<example_ros2_interfaces::msg::RobotStatus>::SharedPtr robot_status_publisher_; /*发布机器人位姿发布者*/
 
   /**
    * @brief 500ms 定时回调函数，
-   * 
+   *
    */
   void timer_callback() {
-    // 创建消息
     example_ros2_interfaces::msg::RobotStatus message;
-    message.status = robot.get_status();
+    message.status = robot.get_status(); /* 创建消息*/
     message.pose = robot.get_current_pose();
     RCLCPP_INFO(this->get_logger(), "Publishing: %f", robot.get_current_pose());
-    // 发布消息
-    robot_status_publisher_->publish(message);
+    robot_status_publisher_->publish(message); /*发布消息*/
   };
 
   /**
    * @brief 收到话题数据的回调函数
-   * 
+   *
    * @param request 请求共享指针，包含移动距离
    * @param response 响应的共享指针，包含当前位置信息
    */
@@ -102,6 +98,7 @@ private:
     response->pose = robot.get_current_pose();
   };
 };
+
 
 int main(int argc, char** argv) {
   rclcpp::init(argc, argv);
