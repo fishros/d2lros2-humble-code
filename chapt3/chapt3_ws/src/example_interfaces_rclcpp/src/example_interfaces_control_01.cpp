@@ -2,7 +2,6 @@
 #include "example_ros2_interfaces/srv/move_robot.hpp"
 #include "rclcpp/rclcpp.hpp"
 
-
 class ExampleInterfacesControl : public rclcpp::Node {
  public:
   explicit ExampleInterfacesControl(std::string name) : Node(name) {

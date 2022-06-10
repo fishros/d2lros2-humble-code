@@ -84,16 +84,18 @@ class ActionRobotCpp : public rclcpp::Node {
       const std::shared_ptr<GoalHandleMoveRobot> goal_handle) {
     RCLCPP_INFO(this->get_logger(), "Received request to cancel goal");
     (void)goal_handle;
-    /*认可取消执行，让机器人停下来*/
-    robot.stop_move();
+    robot.stop_move(); /*认可取消执行，让机器人停下来*/
     return rclcpp_action::CancelResponse::ACCEPT;
   }
 
   void execute(const std::shared_ptr<GoalHandleMoveRobot> goal_handle) {
-    RCLCPP_INFO(this->get_logger(), "Executing goal");
+    RCLCPP_INFO(this->get_logger(), "开始执行移动。。。");
     const auto goal = goal_handle->get_goal();
+    
     auto feedback = std::make_shared<MoveRobot::Feedback>();
-    float& pose = feedback->pose;
+
+
+
     auto result = std::make_shared<MoveRobot::Result>();
 
     pose = 0.1f;
