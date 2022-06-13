@@ -12,21 +12,44 @@ find_package(robot_control_interfaces REQUIRED)
 find_package(example_interfaces REQUIRED)
 find_package(rclcpp_action REQUIRED)
 
-add_executable(action_robot_cpp src/action_robot_cpp.cpp)
-target_include_directories(action_robot_cpp PUBLIC
+add_executable(action_robot_01 
+    src/robot.cpp
+    src/action_robot_01.cpp
+)
+target_include_directories(action_robot_01 PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
   $<INSTALL_INTERFACE:include>)
-target_compile_features(action_robot_cpp PUBLIC c_std_99 cxx_std_17)  # Require C99 and C++17
+target_compile_features(action_robot_01 PUBLIC c_std_99 cxx_std_17)  # Require C99 and C++17
 ament_target_dependencies(
-  action_robot_cpp
+  action_robot_01
   "rclcpp"
   "rclcpp_action"
   "robot_control_interfaces"
   "example_interfaces"
 )
 
-install(TARGETS action_robot_cpp
+install(TARGETS action_robot_01
   DESTINATION lib/${PROJECT_NAME})
+
+
+add_executable(action_control_01 
+  src/action_control_01.cpp
+)
+target_include_directories(action_control_01 PUBLIC
+$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+$<INSTALL_INTERFACE:include>)
+target_compile_features(action_control_01 PUBLIC c_std_99 cxx_std_17)  # Require C99 and C++17
+ament_target_dependencies(
+  action_control_01
+  "rclcpp"
+  "rclcpp_action"
+  "robot_control_interfaces"
+  "example_interfaces"
+)
+
+install(TARGETS action_control_01
+DESTINATION lib/${PROJECT_NAME})
+
 
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
