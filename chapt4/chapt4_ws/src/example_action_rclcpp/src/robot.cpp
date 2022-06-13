@@ -7,6 +7,7 @@ float Robot::move_step() {
                0.1; /* 每一步移动当前到目标距离的1/10*/
   current_pose_ += step;
   std::cout << "移动了：" << step << "当前位置：" << current_pose_ << std::endl;
+  return current_pose_;
 }
 
 /*移动一段距离*/
