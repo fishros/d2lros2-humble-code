@@ -20,7 +20,8 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            'action_robot_02 = example_action_rclpy.action_robot_02:main'
+            'action_robot_02 = example_action_rclpy.action_robot_02:main',
+            'action_control_02 = example_action_rclpy.action_control_02:main'
         ],
     },
 )

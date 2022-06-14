@@ -11,12 +11,12 @@ class ActionRobot01 : public rclcpp::Node {
   using GoalHandleMoveRobot = rclcpp_action::ServerGoalHandle<MoveRobot>;
 
   explicit ActionRobot01(std::string name) : Node(name) {
+    RCLCPP_INFO(this->get_logger(), "节点已启动：%s.", name.c_str());
+
     using namespace std::placeholders;  // NOLINT
 
     this->action_server_ = rclcpp_action::create_server<MoveRobot>(
-        this->get_node_base_interface(), this->get_node_clock_interface(),
-        this->get_node_logging_interface(),
-        this->get_node_waitables_interface(), "move_robot",
+        this, "move_robot",
         std::bind(&ActionRobot01::handle_goal, this, _1, _2),
         std::bind(&ActionRobot01::handle_cancel, this, _1),
         std::bind(&ActionRobot01::handle_accepted, this, _1));
@@ -56,7 +56,7 @@ class ActionRobot01 : public rclcpp::Node {
 
     auto result = std::make_shared<MoveRobot::Result>();
     rclcpp::Rate rate = rclcpp::Rate(2);
-    robot.move_distance(goal->distance);
+    robot.set_goal(goal->distance);
     while (rclcpp::ok() && !robot.close_goal()) {
       robot.move_step();
       auto feedback = std::make_shared<MoveRobot::Feedback>();
@@ -81,8 +81,6 @@ class ActionRobot01 : public rclcpp::Node {
 
   void handle_accepted(const std::shared_ptr<GoalHandleMoveRobot> goal_handle) {
     using std::placeholders::_1;
-    /*this needs to return quickly to avoid blocking the executor, so spin up a
-     * new thread */
     std::thread{std::bind(&ActionRobot01::execute_move, this, _1), goal_handle}
         .detach();
   }

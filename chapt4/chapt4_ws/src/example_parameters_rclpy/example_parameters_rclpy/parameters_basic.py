@@ -14,7 +14,7 @@ from rclpy.node import Node
 # get_parameters	        通过多个参数名字获取多个参数
 # 设置
 # set_parameters	        设置一组参数的值
-# 
+#
 # has_parameter             参数是否被声明
 # rcutils/logging.h
 #   RCUTILS_LOG_SEVERITY_UNSET = 0,  ///< The unset log level
@@ -29,32 +29,37 @@ class ParametersBasicNode(Node):
     """
     创建一个ParametersBasicNode节点，并在初始化时输出一个话
     """
-    def __init__(self,name):
+
+    def __init__(self, name):
         super().__init__(name)
-        self.get_logger().info("节点已启动：%s!" % name)
+        self.get_logger().info(f"节点已启动：{name}!")
         # 声明参数
-        self.declare_parameter('rcl_log_level', 0) 
+        self.declare_parameter('rcl_log_level', 0)
         # 获取参数
         log_level = self.get_parameter("rcl_log_level").value
         # 设置参数
-        self.get_logger().info(f"设置日至级别为 {log_level} !")
         self.get_logger().set_level(log_level)
-        self.get_logger().info(f"已经设置日至级别为 {log_level} !")
         # 定时修改
-        self.timer = self.create_timer(0.5,self.timer_callback)
+        self.timer = self.create_timer(0.5, self.timer_callback)
 
     def timer_callback(self):
-        self.get_logger().debug(f"进入日志回调设置函数!")
+        """定时器回调函数"""
         # 获取参数
         log_level = self.get_parameter("rcl_log_level").value
         # 设置参数
-        self.get_logger().info(f"设置日至级别为 {log_level} !")
         self.get_logger().set_level(log_level)
-        self.get_logger().info(f"已经设置日至级别为 {log_level} !")
+        print(
+            f"========================{log_level}=============================")
+        self.get_logger().debug("我是DEBUG级别的日志，我被打印出来了!")
+        self.get_logger().info("我是INFO级别的日志，我被打印出来了!")
+        self.get_logger().warn("我是WARN级别的日志，我被打印出来了!")
+        self.get_logger().error("我是ERROR级别的日志，我被打印出来了!")
+        self.get_logger().fatal("我是FATAL级别的日志，我被打印出来了!")
 
 
 def main(args=None):
-    rclpy.init(args=args) # 初始化rclpy
+    """主函数，由ROS2调用"""
+    rclpy.init(args=args)  # 初始化rclpy
     node = ParametersBasicNode("parameters_basic")  # 新建一个节点
-    rclpy.spin(node) # 保持节点运行，检测是否收到退出指令（Ctrl+C）
-    rclpy.shutdown() # 关闭rclpy
+    rclpy.spin(node)  # 保持节点运行，检测是否收到退出指令（Ctrl+C）
+    rclpy.shutdown()  # 关闭rclpy

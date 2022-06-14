@@ -11,7 +11,7 @@ float Robot::move_step() {
 }
 
 /*移动一段距离*/
-bool Robot::move_distance(float distance) {
+bool Robot::set_goal(float distance) {
   move_distance_ = distance;
   target_pose_ += move_distance_;
 

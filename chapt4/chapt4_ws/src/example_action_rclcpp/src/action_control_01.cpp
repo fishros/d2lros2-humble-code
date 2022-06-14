@@ -16,10 +16,10 @@ class ActionControl01 : public rclcpp::Node {
       std::string name,
       const rclcpp::NodeOptions& node_options = rclcpp::NodeOptions())
       : Node(name, node_options) {
-    this->client_ptr_ = rclcpp_action::create_client<MoveRobot>(
-        this->get_node_base_interface(), this->get_node_graph_interface(),
-        this->get_node_logging_interface(),
-        this->get_node_waitables_interface(), "move_robot");
+    RCLCPP_INFO(this->get_logger(), "节点已启动：%s.", name.c_str());
+
+    this->client_ptr_ =
+        rclcpp_action::create_client<MoveRobot>(this, "move_robot");
 
     this->timer_ =
         this->create_wall_timer(std::chrono::milliseconds(500),
