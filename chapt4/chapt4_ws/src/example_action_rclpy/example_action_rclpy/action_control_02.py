@@ -1,17 +1,17 @@
-
-from robot_control_interfaces.action import MoveRobot
-
 import rclpy
 from rclpy.action import ActionClient
 from rclpy.node import Node
+# 导入Action接口
+from robot_control_interfaces.action import MoveRobot
 
 
 class ActionControl02(Node):
     """Action客户端"""
 
-    def __init__(self):
-        super().__init__('action_control_02')
-        self._action_client = ActionClient(self, MoveRobot, 'move_robot')
+    def __init__(self, name):
+        super().__init__(name)
+        self.get_logger().info(f"节点已启动：{name}!")
+        self.action_client_ = ActionClient(self, MoveRobot, 'move_robot')
         self.send_goal_timer_ = self.create_timer(1, self.send_goal)
 
     def send_goal(self):
@@ -19,8 +19,8 @@ class ActionControl02(Node):
         self.send_goal_timer_.cancel()
         goal_msg = MoveRobot.Goal()
         goal_msg.distance = 5.0
-        self._action_client.wait_for_server()
-        self._send_goal_future = self._action_client.send_goal_async(goal_msg,
+        self.action_client_.wait_for_server()
+        self._send_goal_future = self.action_client_.send_goal_async(goal_msg,
                                                                      feedback_callback=self.feedback_callback)
         self._send_goal_future.add_done_callback(self.goal_response_callback)
 
@@ -48,7 +48,7 @@ class ActionControl02(Node):
 def main(args=None):
     """主函数"""
     rclpy.init(args=args)
-    action_robot_02 = ActionControl02()
+    action_robot_02 = ActionControl02("action_control_02")
     rclpy.spin(action_robot_02)
     rclpy.shutdown()
 

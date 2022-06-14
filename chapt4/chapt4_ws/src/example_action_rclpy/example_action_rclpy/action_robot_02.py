@@ -1,20 +1,25 @@
 #!/usr/bin/env python3
-from robot_control_interfaces.action import MoveRobot
 
+import time
+# 导入rclpy相关库
 import rclpy
+from rclpy.node import Node
 from rclpy.action import ActionServer
 from rclpy.action.server import ServerGoalHandle
-from rclpy.node import Node
+# 导入接口
+from robot_control_interfaces.action import MoveRobot
+# 导入机器人类
 from example_action_rclpy.robot import Robot
-from rclpy.executors import MultiThreadedExecutor
-from rclpy.callback_groups import MutuallyExclusiveCallbackGroup
-import time
+#from rclpy.executors import MultiThreadedExecutor
+#from rclpy.callback_groups import MutuallyExclusiveCallbackGroup
 
 class ActionRobot02(Node):
     """机器人端Action服务"""
 
-    def __init__(self):
-        super().__init__('action_robot_02')
+    def __init__(self,name):
+        super().__init__(name)
+        self.get_logger().info(f"节点已启动：{name}!")
+
         self.robot_ = Robot()
 
         self.action_server_ = ActionServer(
@@ -28,7 +33,7 @@ class ActionRobot02(Node):
         feedback_msg = MoveRobot.Feedback()
         self.robot_.set_goal(goal_handle.request.distance)
 
-        rate = self.create_rate(2)
+        # rate = self.create_rate(2)
         while rclpy.ok() and not self.robot_.close_goal():
             # move
             self.robot_.move_step()
@@ -41,7 +46,7 @@ class ActionRobot02(Node):
                 result = MoveRobot.Result()
                 result.pose = self.robot_.get_current_pose()
                 return result
-            rate.sleep()
+            # rate.sleep() # Rate会造成死锁，单线程执行器时不能使用
             time.sleep(0.5)
 
         goal_handle.succeed()
@@ -53,7 +58,7 @@ class ActionRobot02(Node):
 def main(args=None):
     """主函数"""
     rclpy.init(args=args)
-    action_robot_02 = ActionRobot02()
+    action_robot_02 = ActionRobot02("action_robot_02")
     # executor = MultiThreadedExecutor()
     # executor.add_node(action_robot_02)
     # executor.spin()
