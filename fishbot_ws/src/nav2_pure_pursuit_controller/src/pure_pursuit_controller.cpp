@@ -104,6 +104,12 @@ void PurePursuitController::deactivate() {
   global_pub_->on_deactivate();
 }
 
+void PurePursuitController::setSpeedLimit(const double &speed_limit,
+                                          const bool &percentage) {
+  (void)speed_limit;
+  (void)percentage;
+}
+
 geometry_msgs::msg::TwistStamped PurePursuitController::computeVelocityCommands(
     const geometry_msgs::msg::PoseStamped &pose,
     const geometry_msgs::msg::Twist &velocity,
@@ -111,7 +117,7 @@ geometry_msgs::msg::TwistStamped PurePursuitController::computeVelocityCommands(
   (void)goal_checker;
   (void)velocity;
   auto transformed_plan = transformGlobalPlan(pose);
-
+  RCLCPP_WARN(logger_, "================================================\n");
   // Find the first pose which is at a distance greater than the specified
   // lookahed distance
   auto goal_pose_it = std::find_if(
@@ -156,6 +162,11 @@ geometry_msgs::msg::TwistStamped PurePursuitController::computeVelocityCommands(
 void PurePursuitController::setPlan(const nav_msgs::msg::Path &path) {
   global_pub_->publish(path);
   global_plan_ = path;
+  RCLCPP_WARN(logger_, "================================================\n");
+  for (int i = 0; i < path.poses.size(); i++) {
+    RCLCPP_WARN(logger_,"(%f,%f),", path.poses[i].x, path.poses[i].y);
+  }
+  RCLCPP_WARN(logger_, "================================================\n");
 }
 
 nav_msgs::msg::Path PurePursuitController::transformGlobalPlan(
@@ -277,3 +288,21 @@ bool PurePursuitController::transformPose(
 // Register this controller as a nav2_core plugin
 PLUGINLIB_EXPORT_CLASS(nav2_pure_pursuit_controller::PurePursuitController,
                        nav2_core::Controller)
+/*
+
+[component_container_isolated-1] [FATAL] [1657016690.907730399]
+[controller_server]: Failed to create controller. Exception: Failed to load
+library
+/home/mouse/code/github/d2lros2-humble-code/fishbot_ws/install/nav2_pure_pursuit_controller/lib/libnav2_pure_pursuit_controller.so.
+Make sure that you are calling the PLUGINLIB_EXPORT_CLASS macro in the library
+code, and that names are consistent between this macro and your XML. Error
+string: Could not load library dlopen error:
+/home/mouse/code/github/d2lros2-humble-code/fishbot_ws/install/nav2_pure_pursuit_controller/lib/libnav2_pure_pursuit_controller.so:
+undefined symbol:
+_ZN28nav2_pure_pursuit_controller21PurePursuitController13setSpeedLimitERKdRKb,
+at ./src/shared_library.c:99 [component_container_isolated-1] [ERROR]
+[1657016690.907913113] [lifecycle_manager_navigation]: Failed to change state
+for node: controller_server [component_container_isolated-1] [ERROR]
+[1657016690.907933543] [lifecycle_manager_navigation]: Failed to bring up all
+requested nodes. Aborting bringup.
+*/

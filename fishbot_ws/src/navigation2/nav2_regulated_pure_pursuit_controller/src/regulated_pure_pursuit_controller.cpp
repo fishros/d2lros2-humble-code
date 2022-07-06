@@ -548,7 +548,7 @@ bool RegulatedPurePursuitController::inCollision(
   {
     return false;
   }
-
+  
   // if occupied or unknown and not to traverse unknown space
   return footprint_cost >= static_cast<double>(LETHAL_OBSTACLE);
 }

@@ -1,0 +1,11 @@
+{
+    "files.associations": {
+        "*.idl": "cpp",
+        "*.ipp": "cpp",
+        "array": "cpp",
+        "any": "cpp",
+        "string_view": "cpp",
+        "hash_map": "cpp",
+        "hash_set": "cpp"
+    }
+}

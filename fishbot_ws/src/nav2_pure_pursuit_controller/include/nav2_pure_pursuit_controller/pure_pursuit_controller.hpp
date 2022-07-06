@@ -29,7 +29,6 @@ class PurePursuitController : public nav2_core::Controller {
       std::shared_ptr<tf2_ros::Buffer> tf,
       std::shared_ptr<nav2_costmap_2d::Costmap2DROS> costmap_ros) override;
 
-
   void cleanup() override;
   void activate() override;
   void deactivate() override;
