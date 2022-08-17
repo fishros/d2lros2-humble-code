@@ -162,11 +162,6 @@ geometry_msgs::msg::TwistStamped PurePursuitController::computeVelocityCommands(
 void PurePursuitController::setPlan(const nav_msgs::msg::Path &path) {
   global_pub_->publish(path);
   global_plan_ = path;
-  RCLCPP_WARN(logger_, "================================================\n");
-  for (int i = 0; i < path.poses.size(); i++) {
-    RCLCPP_WARN(logger_,"(%f,%f),", path.poses[i].x, path.poses[i].y);
-  }
-  RCLCPP_WARN(logger_, "================================================\n");
 }
 
 nav_msgs::msg::Path PurePursuitController::transformGlobalPlan(
